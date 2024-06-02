@@ -1,5 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gastro_galaxy/components/bottom_bar.dart';
@@ -7,6 +9,8 @@ import 'package:gastro_galaxy/config/app_styles.dart';
 import 'package:gastro_galaxy/models/recipe.dart';
 import 'package:gastro_galaxy/pages/recipes_detail.dart';
 import 'package:gastro_galaxy/stores/recipe_store.dart';
+import 'package:camera/camera.dart';
+import 'package:image_picker/image_picker.dart';
 
 class Recipes extends StatefulWidget {
   const Recipes({
@@ -110,7 +114,8 @@ class _RecipesState extends State<Recipes> {
                             return Column(
                               children: [
                                 Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15),
                                   // height: 120,
                                   width: double.infinity,
                                   child: Row(
@@ -120,12 +125,16 @@ class _RecipesState extends State<Recipes> {
                                           Navigator.push(
                                             context,
                                             MaterialPageRoute(
-                                              builder: (context) => RecipesDetail(id: snapshot.data![index].id!),
+                                              builder: (context) =>
+                                                  RecipesDetail(
+                                                      id: snapshot
+                                                          .data![index].id!),
                                             ),
                                           );
                                         },
                                         child: ClipRRect(
-                                          borderRadius: const BorderRadius.all(Radius.circular(15)),
+                                          borderRadius: const BorderRadius.all(
+                                              Radius.circular(15)),
                                           child: SizedBox(
                                             width: 80,
                                             height: 80,
@@ -147,15 +156,20 @@ class _RecipesState extends State<Recipes> {
                                             Navigator.push(
                                               context,
                                               MaterialPageRoute(
-                                                builder: (context) => RecipesDetail(id: snapshot.data![index].id!),
+                                                builder: (context) =>
+                                                    RecipesDetail(
+                                                        id: snapshot
+                                                            .data![index].id!),
                                               ),
                                             );
                                           },
                                           child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                snapshot.data![index].name ?? "",
+                                                snapshot.data![index].name ??
+                                                    "",
                                                 style: const TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                 ),
@@ -164,7 +178,9 @@ class _RecipesState extends State<Recipes> {
                                                 height: 10,
                                               ),
                                               Text(
-                                                snapshot.data![index].description ?? "",
+                                                snapshot.data![index]
+                                                        .description ??
+                                                    "",
                                               ),
                                             ],
                                           ),
@@ -185,9 +201,11 @@ class _RecipesState extends State<Recipes> {
                                                 topRight: Radius.circular(20),
                                               ),
                                             ),
-                                            backgroundColor: AppStyles.primaryColor,
+                                            backgroundColor:
+                                                AppStyles.primaryColor,
                                             builder: (BuildContext context) {
-                                              return editModal(snapshot.data![index]);
+                                              return editModal(
+                                                  snapshot.data![index]);
                                             },
                                           );
                                         },
@@ -205,7 +223,8 @@ class _RecipesState extends State<Recipes> {
                                   height: 30,
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20),
                                   child: Container(
                                     height: 1,
                                     width: double.infinity,
@@ -229,13 +248,22 @@ class _RecipesState extends State<Recipes> {
     );
   }
 
+  Future takePhoto() async {
+    final image = await ImagePicker().pickImage(source: ImageSource.camera);
+
+    if (image != null) {
+      print(image);
+    }
+  }
+
   Widget editModal(Recipe? existingRecipe) {
     return StatefulBuilder(
       builder: (BuildContext context, StateSetter setState) {
         if (existingRecipe != null) {
           setState(() {
             recipeStore.recipesNameController.text = existingRecipe.name ?? "";
-            recipeStore.recipesDescriptionController.text = existingRecipe.description ?? "";
+            recipeStore.recipesDescriptionController.text =
+                existingRecipe.description ?? "";
             recipeStore.recipesImageController.text = existingRecipe.url ?? "";
           });
         }
@@ -251,7 +279,9 @@ class _RecipesState extends State<Recipes> {
                     bottom: 50,
                   ),
                   child: Text(
-                    existingRecipe != null ? "Editar Receita" : "Adicionar Receita",
+                    existingRecipe != null
+                        ? "Editar Receita"
+                        : "Adicionar Receita",
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 20,
@@ -408,7 +438,8 @@ class _RecipesState extends State<Recipes> {
                                 ),
                                 child: Container(
                                   color: Colors.white,
-                                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 40, vertical: 20),
                                   child: const Text(
                                     "SALVAR",
                                     style: TextStyle(
@@ -431,7 +462,8 @@ class _RecipesState extends State<Recipes> {
                                   ),
                                   child: Container(
                                     color: Colors.white,
-                                    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 40, vertical: 20),
                                     child: const Text(
                                       "DELETAR",
                                       style: TextStyle(
@@ -445,6 +477,33 @@ class _RecipesState extends State<Recipes> {
                               ),
                           ],
                         ),
+                        Row(
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                takePhoto();
+                              },
+                              child: ClipRRect(
+                                borderRadius: const BorderRadius.all(
+                                  Radius.circular(200),
+                                ),
+                                child: Container(
+                                  color: Colors.white,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 40, vertical: 20),
+                                  child: const Text(
+                                    "TIRAR FOTO",
+                                    style: TextStyle(
+                                      color: Colors.black87,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            )
+                          ],
+                        )
                       ],
                     ),
                   ),
